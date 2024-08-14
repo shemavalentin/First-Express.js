@@ -47,7 +47,7 @@ app.listen(PORT, () => {
 });
 
 // ============================================================================== */
-
+/*
 const express = require("express");
 
 const app = express();
@@ -112,6 +112,76 @@ app.get("/friends/:friendId", (req, res) => {
   // different ways. but let's do a good practice to send a meaningfull message
   // to the client
   else {
+    res.status(404).json({
+      // send an object of propertes
+      error: "Friend does not exist",
+    });
+  }
+});
+
+app.get("/messages", (req, res) => {
+  res.send("<ul><li> Hello Valentin</li></ul>");
+});
+
+app.post("/messages", (req, res) => {
+  console.log("Updating messages ...");
+});
+
+app.listen(PORT, () => {
+  console.log(`Listening on ${PORT}...`);
+});
+
+// =================== WRITTING A MIDDLEWARE FOR EXPRESS SERVER ===================================== */
+
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+// Let's have a list of freinds that we can add on or retrieve some
+const friends = [
+  {
+    id: 0,
+    name: "Albert Einstein",
+  },
+
+  {
+    id: 1,
+    name: "Sir Isaac Newtoon",
+  },
+];
+
+// Let's register the middleware here
+app.use((req, res, next) => {
+  //Now, what if we need to know the time these requests has took
+  // and it should start count when the request entered in
+  const start = Date.now();
+
+  // // let's here show the data about our request and response
+  // console.log(`${req.method} ${req.url}`); // Now we can keep track of all of our requests comming in
+  // // then call next function to make sure that Express passes the request to the correct handlers/ Endpoints
+  next();
+
+  // The res will come back here in next function when the req is gotten to
+  // to be displayed. let's now calculate difference in time here
+  const delta = Date.now() - start; // the total amount in millsecond
+
+  // let's here show the data about our request and response
+  console.log(`${req.method} ${req.url} ${delta} ms`); // Now we can keep track of all of our requests comming in
+  // then call next function to make sure that Express passes the request to the correct handlers/ Endpoints
+});
+
+app.get("/friends", (req, res) => {
+  res.json(friends);
+});
+
+app.get("/friends/:friendId", (req, res) => {
+  const friendId = Number(req.params.friendId); // Notice how express populated the params property of request with the friendId
+
+  const friend = friends[friendId]; // assigning a friend that is being selected
+  if (friend) {
+    res.status(200).json(friend);
+  } else {
     res.status(404).json({
       // send an object of propertes
       error: "Friend does not exist",
