@@ -171,6 +171,53 @@ app.use((req, res, next) => {
   // then call next function to make sure that Express passes the request to the correct handlers/ Endpoints
 });
 
+// Now registering the JSON parsing middleware.
+app.use(express.json()); //express.json will return a piece of middleware that looks like the above
+// but that instead looks at the content type and sets the req.body to a JS object when the content
+// is application.json
+
+// CREATING POST ROUTE
+
+// Now we are looking at the request object and reading data that was passed in from the client.
+// Data that's in JSON format. The trouble is that our servers don't understand JSON out of the box.
+// We could have do this ourselves through http but express.js has a solution (go to site and API reference)
+
+app.post("/friends", (req, res) => {
+  //It's always a good idea to validate inputs from users even though here we are certain
+  // that the name is a string but we have to make sure that the user doesn't fill in ages,
+  // or other object
+
+  if (!req.body.name) {
+    // if that doesn't exist we set an error status.
+    // Now to avoid that Node will continious execution even though name is empty,
+    // we have to tell it to return when name is empty and show the error message.
+    // This is done when dealling with API Validation ligic
+
+    return res.status(400).json({
+      error: "Missing friend name!",
+    });
+  }
+
+  // creating a new friend
+  const newFriend = {
+    // the important data we need to store is name and it is from the request(req) object
+    // with body then name property =>(req.body.name)
+    name: req.body.name, // this req.body won't exist unless we pass the JSON using our
+    // middleware. Now let's go bellow the middleware to register that JSON
+
+    // Then After, now our body will set to the object which was passed into the request
+
+    // lastly let's set the id on our own
+    id: friends.length,
+  };
+
+  // Now let's add the friend to our array
+  friends.push(newFriend);
+
+  // if a friend is added sussfully, we could return a JSON
+  res.json(newFriend); // this is in keeping that all of our requests return JSON
+});
+
 app.get("/friends", (req, res) => {
   res.json(friends);
 });
