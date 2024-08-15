@@ -134,22 +134,11 @@ app.listen(PORT, () => {
 // =================== WRITTING A MIDDLEWARE FOR EXPRESS SERVER ===================================== */
 
 const express = require("express");
+const freindsController = require("./controllers/friends.controller");
+const messagesController = require("./controllers/messages.controller");
 
 const app = express();
 const PORT = 3000;
-
-// Let's have a list of freinds that we can add on or retrieve some
-const friends = [
-  {
-    id: 0,
-    name: "Albert Einstein",
-  },
-
-  {
-    id: 1,
-    name: "Sir Isaac Newtoon",
-  },
-];
 
 // Let's register the middleware here
 app.use((req, res, next) => {
@@ -182,67 +171,20 @@ app.use(express.json()); //express.json will return a piece of middleware that l
 // Data that's in JSON format. The trouble is that our servers don't understand JSON out of the box.
 // We could have do this ourselves through http but express.js has a solution (go to site and API reference)
 
-app.post("/friends", (req, res) => {
-  //It's always a good idea to validate inputs from users even though here we are certain
-  // that the name is a string but we have to make sure that the user doesn't fill in ages,
-  // or other object
+// Posting a friend
+app.post("/friends", freindsController.postFriend);
 
-  if (!req.body.name) {
-    // if that doesn't exist we set an error status.
-    // Now to avoid that Node will continious execution even though name is empty,
-    // we have to tell it to return when name is empty and show the error message.
-    // This is done when dealling with API Validation ligic
+// Getting all friends
+app.get("/friends", freindsController.getFriends);
 
-    return res.status(400).json({
-      error: "Missing friend name!",
-    });
-  }
+// Getting an individual friend
 
-  // creating a new friend
-  const newFriend = {
-    // the important data we need to store is name and it is from the request(req) object
-    // with body then name property =>(req.body.name)
-    name: req.body.name, // this req.body won't exist unless we pass the JSON using our
-    // middleware. Now let's go bellow the middleware to register that JSON
+app.get("/friends/:friendId", freindsController.getFriend);
 
-    // Then After, now our body will set to the object which was passed into the request
+app.get("/messages", messagesController.getMessages); // getMessages is a function handler
+// for the get /messages here above. it is imported from messages.controllers.js
 
-    // lastly let's set the id on our own
-    id: friends.length,
-  };
-
-  // Now let's add the friend to our array
-  friends.push(newFriend);
-
-  // if a friend is added sussfully, we could return a JSON
-  res.json(newFriend); // this is in keeping that all of our requests return JSON
-});
-
-app.get("/friends", (req, res) => {
-  res.json(friends);
-});
-
-app.get("/friends/:friendId", (req, res) => {
-  const friendId = Number(req.params.friendId); // Notice how express populated the params property of request with the friendId
-
-  const friend = friends[friendId]; // assigning a friend that is being selected
-  if (friend) {
-    res.status(200).json(friend);
-  } else {
-    res.status(404).json({
-      // send an object of propertes
-      error: "Friend does not exist",
-    });
-  }
-});
-
-app.get("/messages", (req, res) => {
-  res.send("<ul><li> Hello Valentin</li></ul>");
-});
-
-app.post("/messages", (req, res) => {
-  console.log("Updating messages ...");
-});
+app.post("/messages", messagesController.postMessage);
 
 app.listen(PORT, () => {
   console.log(`Listening on ${PORT}...`);
