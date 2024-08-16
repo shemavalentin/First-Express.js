@@ -1,0 +1,33 @@
+{{!-- 
+There is one more really useful feature that's not well documented and it could be confusing 
+if you are not used to working with templates engines, such as handlebars.
+
+This file contains all of the HTML that all pages will use. I mean all of the pages
+with this layout.
+
+So, what we can do is take our HTML(index.hbs) and move it over to our layout,
+and remove everything that is going to change between each page, which is going to be the
+body
+ --}}
+
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="site/css/style.css">
+</head>
+
+<body>
+    {{!-- And we replace the body codes with special handlebars variables with 
+    three mustaches/ handlebars , with three curly braces  like the follow--}}
+
+    {{{ body }}} 
+</body>
+
+</html>
+
+{{!-- NOW THIS LAYOUT IS USED BY DEFAULT WHEN WE CALL THE res.render FUNCTION  --}}
+

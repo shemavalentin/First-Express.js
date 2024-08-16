@@ -1,10 +1,12 @@
-<!DOCTYPE html>
+{{!-- <!DOCTYPE html>
 <html>
     <head>
         <title>{{title}}</title>
         <link rel="stylesheet" href="site/css/style.css">
     </head>
-    <body>
+    <body> --}}
+
+{{!-- ================================================================================== --}}
         <!-- What does a templating engine does?? 
          Well, when you run your Express server, the templating engine replaces variables 
          marked with our curly braces, with their actual values that came from the node 
@@ -23,8 +25,13 @@
          Handlebars before we get the page that should be rendered by the browser. -->
         <img src="site/images/skimountain.jpeg" alt="Ski mountain"> 
         {{!-- Added site cze in server, these static files are loading under site path --}}
-    </body>
-</html>
+
+
+        
+{{!-- ======================================================================================= --}}
+
+    {{!-- </body>
+</html> --}}
 
 <!-- We are serving this HTML to the browser, What if we want this html to be more dynamic 
  by populating the content and potentially even the layout based on some state in the server.
