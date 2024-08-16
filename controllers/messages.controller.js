@@ -16,7 +16,9 @@ So to deal with these different scenarios, we're going to use the join function 
 */
   // path.join(__dirname, "..", "public", "skimountain.jpeg"); // but this needs to be an absolute path. we have to use __dirname
   // res.send("<ul><li> Hello Valentin</li></ul>");
-  res.sendFile(path.join(__dirname, "..", "public", "skimountain.jpeg")); // To help express find our file, we're going to make use of the built-in path module.
+  res.sendFile(
+    path.join(__dirname, "..", "public", "images", "skimountain.jpeg")
+  ); // To help express find our file, we're going to make use of the built-in path module.
 }
 
 function postMessage(req, res) {

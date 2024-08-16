@@ -205,6 +205,7 @@ and we can create a router by using express object called express.router
  */
 
 const express = require("express");
+const path = require("path");
 
 const friendsRouter = require("./routes/friends.router");
 
@@ -225,6 +226,9 @@ app.use((req, res, next) => {
   // console.log(`${req.method} ${req.url} ${delta} ms`);
   console.log(`${req.method} ${req.baseUrl} ${req.url} ${delta} ms`);
 });
+
+// using Express static file middleware to handle many files
+app.use("/site", express.static(path.join(__dirname, "public"))); // whether to make it available under the root, let avail it under /site
 
 app.use(express.json()); // this will generate a middleware from express but equivalent to one of the above
 
@@ -248,3 +252,33 @@ app.use("/messages", messagesRouter);
 app.listen(PORT, () => {
   console.log(`Listening on ${PORT}...`);
 });
+
+/* 
+NOTE: One really common scenario when working with node servers is using Node to 
+serve a front-end web application in addition to an API. It could be a plain old static HTML
+website, or it could be React,or VueJS or Angular or any other framework.
+
+One way we can do think using the Express static file middleware.
+////////////////////////////////////
+app.use("/site", express.static(path.join(__dirname, "public")));  on this line, Looking how
+our server is structured, the part that serves static files which is this line is not very restful.
+
+We're not talking to a collection of data and getting an item from it. We are just querrying
+the server by passing in the file, like index.html. like this our server isn't sending collections
+of data to the front end, to the browser to display however the browser wants. instead it's 
+sending the full HTML and telling the brewser to just render whatever is in that HTML directly.
+but that's ok.  Not being RESTfull isn't necessarily a bad thing if  we're serving files,
+as opposed to working with row data.
+
+However, if you expect your Node server to handle many thousands of users, oftentimes it's
+better to server your files not from Node, like we've been doing, but instead from a CDN
+(Content Delivery Network). Something like akamai.com, which runs a big portion of internet
+or amazon's CloudFront. This way, you get specialized servers, run by these billion -dollar
+companies, to host all your static files and data that's hosted locally in many different countries.
+So your users in these locations have the quickest possible access times for those file.
+So the specialized content delivey network deals with your static files, and Node can focus 
+on what it does best, which is non-blocking asynchlonous input output for all of those 
+restful endpoints in your API.
+
+
+*/
