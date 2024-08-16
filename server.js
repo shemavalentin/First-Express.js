@@ -133,6 +133,7 @@ app.listen(PORT, () => {
 
 // =================== WRITTING A MIDDLEWARE FOR EXPRESS SERVER ===================================== */
 
+/*
 const express = require("express");
 const freindsController = require("./controllers/friends.controller");
 const messagesController = require("./controllers/messages.controller");
@@ -160,7 +161,7 @@ app.use((req, res, next) => {
   // then call next function to make sure that Express passes the request to the correct handlers/ Endpoints
 });
 
-// Now registering the JSON parsing middleware.
+// Now registering the JSON parsing middleware. This is a middleware itself from express
 app.use(express.json()); //express.json will return a piece of middleware that looks like the above
 // but that instead looks at the content type and sets the req.body to a JS object when the content
 // is application.json
@@ -185,6 +186,64 @@ app.get("/messages", messagesController.getMessages); // getMessages is a functi
 // for the get /messages here above. it is imported from messages.controllers.js
 
 app.post("/messages", messagesController.postMessage);
+
+app.listen(PORT, () => {
+  console.log(`Listening on ${PORT}...`);
+});
+
+*/
+
+// =========== USING ROUTERS IN EXPRESS ========
+
+/*
+When developping large applications we need to use routers to break down our application
+and make it more modular.
+What is route? It is like a mini application like express app here that is assigned to express.
+
+We use routers to break down our application and make it more modular
+and we can create a router by using express object called express.router
+ */
+
+const express = require("express");
+
+const friendsRouter = require("./routes/friends.router");
+
+const messagesRouter = require("./routes/messages.router");
+
+const app = express();
+const PORT = 3000;
+
+// Let's register the middleware here
+app.use((req, res, next) => {
+  const start = Date.now();
+  next();
+
+  const delta = Date.now() - start;
+
+  // We need to know which middleware is being hit in our logs
+  // the add this to know: req.baseUrl
+  // console.log(`${req.method} ${req.url} ${delta} ms`);
+  console.log(`${req.method} ${req.baseUrl} ${req.url} ${delta} ms`);
+});
+
+app.use(express.json()); // this will generate a middleware from express but equivalent to one of the above
+
+// Now, the way we use routers in node is the same as we use any other middleware in node applications
+// we need to make sure to use them by calling app.use() function just like other middleware
+
+// *** NOW MOUNTING OUR friendRouter on the /friend path
+
+app.use("/friends", friendsRouter); // this is sometimes also called mounting the router into the app.
+// The special thing routers allow us to do is that "we can mount a group routes under a
+// specific path". path here means an endpoint. So if we know that all our friends are going to
+// be inder the slash friends path just with different HTTP methods and potentially something
+// afterwards then we can mount our friendRouter on the slash
+
+// MOUNTING messagesRouter ON THE SLASH MESSAGES PATH.
+// To mount a router we use a form of middleware.
+// So it responds to all the requests that go to slash messages
+
+app.use("/messages", messagesRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on ${PORT}...`);
