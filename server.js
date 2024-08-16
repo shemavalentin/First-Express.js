@@ -210,8 +210,18 @@ const path = require("path");
 const friendsRouter = require("./routes/friends.router");
 
 const messagesRouter = require("./routes/messages.router");
+const { title } = require("process");
 
 const app = express();
+
+// Telling the express where to find our handlebars as we don't have to import them
+// by setting it.
+app.set("view engine", "hbs"); // like this Express has all information to load Handlebars internally
+// and find our templates in our project folder.
+
+// Setting our views path
+app.set("views", path.join(__dirname, "views"));
+
 const PORT = 3000;
 
 // Let's register the middleware here
@@ -231,6 +241,17 @@ app.use((req, res, next) => {
 app.use("/site", express.static(path.join(__dirname, "public"))); // whether to make it available under the root, let avail it under /site
 
 app.use(express.json()); // this will generate a middleware from express but equivalent to one of the above
+
+// Serving our Handlebars file into the server
+app.get("/", (req, res) => {
+  // Telling Express that we're rendering the Handlebars file called index.hbs .
+  // and the second parameter we pass in is an object which has the values for
+  // all of variables in our Handlebars file.
+  res.render("index", {
+    title: "My friends are very clever",
+    caption: "Let's go skiing!",
+  });
+});
 
 // Now, the way we use routers in node is the same as we use any other middleware in node applications
 // we need to make sure to use them by calling app.use() function just like other middleware
@@ -279,6 +300,4 @@ So your users in these locations have the quickest possible access times for tho
 So the specialized content delivey network deals with your static files, and Node can focus 
 on what it does best, which is non-blocking asynchlonous input output for all of those 
 restful endpoints in your API.
-
-
 */
